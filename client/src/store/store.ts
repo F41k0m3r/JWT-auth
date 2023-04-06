@@ -4,6 +4,7 @@ import AuthService from '../services/AuthService';
 import axios from 'axios';
 import {AuthResponse} from '../models/response/AuthResponse';
 import {API_URL} from '../http';
+import {UserService} from '../services/UserService';
 
 export default class Store {
     user = {} as IUser;
@@ -25,11 +26,9 @@ export default class Store {
     setLoading(bool: boolean) {
         this.isLoading = bool;
     }
-
     async login(email: string, password: string) {
         try {
             const response = await AuthService.login(email, password);
-            console.log(response)
             localStorage.setItem('token', response.data.accessToken);
             this.setAuth(true);
             this.setUser(response.data.user);
@@ -37,11 +36,9 @@ export default class Store {
             console.log(e.response?.data?.message);
         }
     }
-
     async registration(email: string, password: string) {
         try {
             const response = await AuthService.register(email, password);
-            console.log(response)
             localStorage.setItem('token', response.data.accessToken);
             this.setAuth(true);
             this.setUser(response.data.user);
@@ -56,18 +53,18 @@ export default class Store {
             localStorage.removeItem('token');
             this.setAuth(false);
             this.setUser({} as IUser);
+            window.location.reload()
         } catch (e:any) {
             console.log(e.response?.data?.message);
         }
     }
 
-    async   checkAuth() {
+    async checkAuth() {
         this.setLoading(true);
         try {
-            const response = await axios.get<AuthResponse>(`${API_URL}/refresh`, {withCredentials: true})
-            console.log(response);
+            const response = await axios.get<AuthResponse>(`${API_URL}/refresh`, { withCredentials: true })
             localStorage.setItem('token', response.data.accessToken);
-            this.setAuth(true);
+            this.setAuth(true)
             this.setUser(response.data.user);
         } catch (e:any) {
             console.error(e?.response?.data?.message);

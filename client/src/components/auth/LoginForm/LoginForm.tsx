@@ -3,9 +3,9 @@ import {useForm} from 'react-hook-form';
 import styles from './LoginForm.module.css';
 import {Context} from '../../../main';
 import {observer} from 'mobx-react-lite';
+import {Link, useNavigate} from 'react-router-dom';
 
 interface props {
-
 }
 type Inputs = {
     email:string,
@@ -14,8 +14,10 @@ type Inputs = {
 const LoginForm:FC<props> = () => {
     const {register, handleSubmit, formState: {errors}} = useForm<Inputs>()
     const {store} = useContext(Context)
+    const navigate = useNavigate()
     const onSubmit = (data: Inputs):void => {
         store.login(data.email, data.password)
+        navigate('/users')
     }
     return (
         <div className={styles.wrap}>
@@ -45,7 +47,9 @@ const LoginForm:FC<props> = () => {
                 <input
                     className={styles.submit}
                     type="submit"/>
-                <h4 className={styles.subMessage}>Еще не зарегистрированы? <a className={styles.link}>Регистрация</a></h4>
+                <h4 className={styles.subMessage}>Еще не зарегистрированы?
+                    <Link to={"/auth/registration"} className={styles.link}>Зарегистрироватся</Link>
+                </h4>
             </form>
         </div>
     );
